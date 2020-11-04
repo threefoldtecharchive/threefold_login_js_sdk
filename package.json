@@ -1,7 +1,7 @@
 {
-  "name": "@rpidanny/typescript-package-template",
-  "version": "1.1.1",
-  "description": "Typescript package boilerplate template",
+  "name": "@threefoldtech/threefold_login",
+  "version": "1.1.0",
+  "description": "threefold login js sdk",
   "main": "dist/index.js",
   "types": "dist/index.d.js",
   "scripts": {
@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rpidanny/typescript-package-template.git"
+    "url": "git+https://github.com/threefoldtech/threefold-login-js-sdk.git"
   },
   "keywords": [
     "typescript",
@@ -47,6 +47,7 @@
     "@semantic-release/commit-analyzer": "^8.0.1",
     "@semantic-release/git": "^9.0.0",
     "@semantic-release/npm": "^7.0.6",
+    "@types/libsodium-wrappers": "^0.7.8",
     "@typescript-eslint/eslint-plugin": "^4.6.0",
     "@typescript-eslint/parser": "^4.6.0",
     "eslint": "^7.6.0",
@@ -68,5 +69,10 @@
   ],
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "bip39": "^3.0.2",
+    "libsodium-wrappers": "^0.7.8",
+    "tweetnacl-util": "^0.15.1"
   }
 }
