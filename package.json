@@ -31,7 +31,6 @@
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged",
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
       "pre-push": "npm run lint"
     }
   },
@@ -48,6 +47,7 @@
     "@semantic-release/git": "^9.0.0",
     "@semantic-release/npm": "^7.0.6",
     "@types/libsodium-wrappers": "^0.7.8",
+    "@types/randomstring": "^1.1.6",
     "@typescript-eslint/eslint-plugin": "^4.6.0",
     "@typescript-eslint/parser": "^4.6.0",
     "eslint": "^7.6.0",
@@ -71,8 +71,10 @@
     "access": "public"
   },
   "dependencies": {
+    "axios": "^0.21.0",
     "bip39": "^3.0.2",
     "libsodium-wrappers": "^0.7.8",
+    "randomstring": "^1.1.5",
     "tweetnacl-util": "^0.15.1"
   }
 }
