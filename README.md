@@ -1,11 +1,65 @@
-# typescript-package-template
+# Threefold Connect Login sdk 
 
-![gh-actions](https://github.com/rpidanny/typescript-package-template/workflows/Release/badge.svg) [![codecov](https://codecov.io/gh/rpidanny/typescript-package-template/branch/main/graph/badge.svg?token=UCCA6D6JCB)](https://codecov.io/gh/rpidanny/typescript-package-template)
+##install
+npm
 
-A boilerplate for typescript packages pre-filled with awesome goodies like:
+`npm install --save @threefoldtech/threefold_login`
 
-* semantic-release
-* commitlint
-* husky
-* jest
-* Github Actions
+yarn
+
+`yarn add @threefoldtech/threefold_login`
+
+
+##usage
+
+Get a LoginUrl
+```js 
+import { ThreefoldLogin, generateRandomString } from '@threefoldtech/threefold_login';
+
+/***/
+
+const threeFoldAPIHost = "{{host endpoint}}";
+const appId = "{{yo're appId}}";
+const seedPhrase = "{{seedphrase}}";
+const redirectUrl = 'url to redirect';
+
+const login = ThreefoldLogin( threeFoldAPIHost,
+                              appId,
+                              seedPhrase,
+                              redirectUrl );
+await login.init();
+
+const state = generateRandomString();
+
+const loginUrl = login.generateLoginUrl();
+// you can now use this `loginUrl` to redirect or open a window
+```
+
+Process redirectUrl
+```js 
+import { ThreefoldLogin } from '@threefoldtech/threefold_login';
+
+/***/
+
+const threeFoldAPIHost = "{{host endpoint}}";
+const appId = "{{yo're appId}}";
+const seedPhrase = "{{seedphrase}}";
+const redirectUrl = 'url to redirect';
+
+// you can use the same instance as `Get a LoginUrl`
+const login = ThreefoldLogin( threeFoldAPIHost,
+                              appId,
+                              seedPhrase,
+                              redirectUrl );
+await login.init();
+
+const state = '{{same state as getting login url}}';
+
+const redirectUrl = URL('{{redirectUrl}}')
+
+try {
+    const profileData = login.parseAndValidateRedirectUrl(redirectUrl, state);
+} catch (e){
+    // something went wrong 
+}
+```
