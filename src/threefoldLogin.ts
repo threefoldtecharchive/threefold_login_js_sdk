@@ -70,7 +70,11 @@ export class ThreefoldLogin {
     async parseAndValidateRedirectUrl(
         url: URL,
         state: string
-    ): Promise<Record<string, unknown>> {
+    ): Promise<{
+        selectedImageId: number;
+        randomRoom: string;
+        profile: Record<string, unknown>;
+    }> {
         await sodium.ready;
 
         const { signedAttempt, doubleName } = parseSignedAttemptFromUrl(url);
@@ -95,6 +99,10 @@ export class ThreefoldLogin {
             throw Error('The name cannot be matched.');
         }
 
+        if (signResultObject.appId !== this._appId) {
+            throw Error('The appId cannot be matched.');
+        }
+
         // consider signResultObject as verified
 
         const encryptedData = signResultObject['data'];
@@ -107,7 +115,11 @@ export class ThreefoldLogin {
             userPublicKey
         );
 
-        return JSON.parse(profileData);
+        return {
+            selectedImageId: signResultObject.selectedImageId,
+            randomRoom: signResultObject.randomRoom,
+            profile: JSON.parse(profileData),
+        };
     }
 
     private async getPublicKeyForDoubleName(
