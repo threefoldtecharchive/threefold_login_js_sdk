@@ -18,16 +18,14 @@
   },
   "keywords": [
     "typescript",
-    "javascript",
-    "template",
     "boilerplate"
   ],
-  "author": "Abhishek <abhishek.rpidanny@gmail.com>",
+  "author": "Jonas Wijne <jonas.wijne@jimber.org>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rpidanny/typescript-package-template/issues"
+    "url": "https://github.com/threefoldtech/threefold-login-js-sdk.git/issues"
   },
-  "homepage": "https://github.com/rpidanny/typescript-package-template#readme",
+  "homepage": "https://github.com/threefoldtech/threefold-login-js-sdk.git#readme",
   "husky": {
     "hooks": {
       "pre-commit": "yarn lint && lint-staged",
@@ -40,10 +38,7 @@
     ]
   },
   "devDependencies": {
-    "@commitlint/cli": "^11.0.0",
-    "@commitlint/config-conventional": "^11.0.0",
     "@semantic-release/changelog": "^5.0.1",
-    "@semantic-release/commit-analyzer": "^8.0.1",
     "@semantic-release/git": "^9.0.0",
     "@semantic-release/npm": "^7.0.6",
     "@types/libsodium-wrappers": "^0.7.8",
