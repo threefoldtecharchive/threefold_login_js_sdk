@@ -8,7 +8,7 @@ export { generate as generateRandomString } from 'randomstring';
  * @todo: implement crypto_box_SEEDBYTES instead of crypto_box_SEEDBYTES/2 this will also break getEdPkInCurve
  */
 export const generateRandomSeedPhrase: () => string = () => {
-    const length = sodium.crypto_box_SEEDBYTES / 2;
+    const length = sodium.crypto_sign_SEEDBYTES;
     const entropy = sodium.randombytes_buf(length);
     return entropyToMnemonic(entropy as Buffer);
 };
@@ -21,7 +21,8 @@ export const generateKeyPair: (seedPhrase: string) => KeyPair = (
     seedPhrase: string
 ) => {
     const entropy = mnemonicToEntropy(seedPhrase);
-    const encodedEntropy = new TextEncoder().encode(entropy);
+    // const encodedEntropy = new TextEncoder().encode(entropy);
+    const encodedEntropy = Uint8Array.from(Buffer.from(entropy, 'hex'));
 
     return sodium.crypto_sign_seed_keypair(encodedEntropy);
 };
