@@ -28,9 +28,6 @@ jobs:
       - run: yarn run lint
       - run: yarn run build
       - run: yarn run test
-      - run: curl -s https://codecov.io/bash | bash
-        env:
-          CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
       - run: npm run semantic-release
         env:
           NPM_TOKEN: ${{secrets.NPM_TOKEN}}
