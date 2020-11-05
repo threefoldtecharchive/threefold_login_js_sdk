@@ -3,18 +3,18 @@
 ##install
 npm
 
-`npm install --save @threefoldtech/threefold_login`
+`npm install --save @threefoldjimber/threefold_login`
 
 yarn
 
-`yarn add @threefoldtech/threefold_login`
+`yarn add @threefoldjimber/threefold_login`
 
 
 ##usage
 
 Get a LoginUrl
 ```js 
-import { ThreefoldLogin, generateRandomString } from '@threefoldtech/threefold_login';
+import { ThreefoldLogin, generateRandomString } from '@threefoldjimber/threefold_login';
 
 /***/
 
@@ -37,7 +37,7 @@ const loginUrl = login.generateLoginUrl();
 
 Process redirectUrl
 ```js 
-import { ThreefoldLogin } from '@threefoldtech/threefold_login';
+import { ThreefoldLogin } from '@threefoldjimber/threefold_login';
 
 /***/
 
