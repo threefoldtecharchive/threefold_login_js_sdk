@@ -5,25 +5,28 @@ import { encodeUTF8, decodeBase64 } from 'tweetnacl-util';
 import Axios from 'axios';
 
 export class ThreefoldLogin {
-    private readonly _threeFoldAPIHost: string;
+    private readonly _threeFoldApiUrl: string;
     private readonly _appId: string;
     private readonly _seedPhrase: string;
     private readonly _redirectUrl: string;
+    private readonly _kycBackendApiUrl: string;
 
     constructor(
-        threeFoldAPIHost: string,
+        threeFoldApiUrl: string,
         appId: string,
         seedPhrase: string,
-        redirectUrl: string
+        redirectUrl: string,
+        kycBackendApiUrl: string
     ) {
-        this._threeFoldAPIHost = threeFoldAPIHost;
+        this._threeFoldApiUrl = threeFoldApiUrl;
         this._appId = appId;
         this._seedPhrase = seedPhrase;
         this._redirectUrl = redirectUrl;
+        this._kycBackendApiUrl = kycBackendApiUrl;
     }
 
     public get threeFoldAPIHost(): string {
-        return this._threeFoldAPIHost;
+        return this._threeFoldApiUrl;
     }
 
     public get appId(): string {
@@ -38,20 +41,22 @@ export class ThreefoldLogin {
         return this._redirectUrl;
     }
 
+    public get kycBackendApiUrl(): string {
+        return this._kycBackendApiUrl;
+    }
+
     public async init(): Promise<void> {
         await sodium.ready;
     }
 
-    async generateLoginUrl(
+    generateLoginUrl(
         state: string,
-        extraParams: {
-            [key: string]: string;
-        } = {}
-    ): Promise<string> {
-        const keyPair: KeyPair = await generateKeyPair(this._seedPhrase);
+        extraParams: Record<string, string> = {}
+    ): string {
+        const keyPair: KeyPair = generateKeyPair(this._seedPhrase);
         const publickey = getEdPkInCurve(keyPair.publicKey);
 
-        const url = new URL(this._threeFoldAPIHost);
+        const url = new URL(this._threeFoldApiUrl);
 
         const params = {
             state: state,
@@ -126,12 +131,39 @@ export class ThreefoldLogin {
         doubleName: string
     ): Promise<Uint8Array> {
         const userData = await Axios.get(
-            `${this._threeFoldAPIHost}/api/users/${doubleName}`
+            `${this._threeFoldApiUrl}/api/users/${doubleName}`
         );
         if (!userData?.data?.publicKey) {
             throw Error('no publicKey');
         }
 
         return decodeBase64(userData.data.publicKey);
+    }
+
+    async verifySignedEmailIdenfier(
+        signedEmailIdentifier: string
+    ): Promise<{ email: string; identifier: string }> {
+        const sei = await Axios.post(
+            `${this._kycBackendApiUrl}/verification/verify-sei`,
+            { signedEmailIdentifier: signedEmailIdentifier }
+        );
+
+        if (sei.status !== 200) {
+            throw Error('No valid response');
+        }
+
+        return sei.data;
+    }
+
+    async isEmailVerified(signedEmailIdentifier: string): Promise<boolean> {
+        try {
+            const emailData = await this.verifySignedEmailIdenfier(
+                signedEmailIdentifier
+            );
+
+            return !!emailData;
+        } catch (e) {
+            return false;
+        }
     }
 }

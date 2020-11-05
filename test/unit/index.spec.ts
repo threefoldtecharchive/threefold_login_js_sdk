@@ -25,6 +25,7 @@ const appId = 'test.threefoldlogin';
 const seedPhrase =
     'calm science teach foil burst until next mango hole sponsor fold bottom cousin push focus track truly tornado turtle over tornado teach large fiscal';
 const redirectUrl = 'https://test-bot-front-end.io';
+const kycBackendUrl = 'https://openkyc.staging.jimber.org';
 
 let login: ThreefoldLogin;
 let state: string;
@@ -34,6 +35,9 @@ const testRedirectUrl =
     'https://test.threefoldlogin/https://test-bot-front-end.io?signedAttempt=%7B%22signedAttempt%22%3A%22OQbbjNSmkvxtVDcjcnbN%2BAQjkiZaruNCQ2arNQ01I1atiK4rcFpBzxm3693WtThY3yA6ChsgbQUA7WpLRvaUBnsic2lnbmVkU3RhdGUiOiJnbHNxSWpXcHZYMjR0cFQ2QTN4Ym12YnI1RkJKaDFQayIsImRhdGEiOnsibm9uY2UiOiJndEdUa2dLdjBHa21mN2E5RWd0MGI5bmxOS0kzR2pYTCIsImNpcGhlcnRleHQiOiJoU2pyNGRydUlJSE5yd3Y0ZkZNWmRTUWNrcG5mZ09GU2svNVBJZUxMOHA4Smdyc09MUm9BNVpCc2xMcnI3SjVsYm1QamlZVTZXN1cvIn0sInNlbGVjdGVkSW1hZ2VJZCI6MTA1LCJkb3VibGVOYW1lIjoiaWZyLjNib3QiLCJyYW5kb21Sb29tIjoiZGY5NzFjZjAtMDkzMi00NGJhLWI1YTktYzg3Y2RkOGUxNmJjIiwiYXBwSWQiOiJ0ZXN0LnRocmVlZm9sZGxvZ2luIn0%3D%22%2C%22doubleName%22%3A%22ifr.3bot%22%7D';
 const testSignedAttempt =
     'OQbbjNSmkvxtVDcjcnbN+AQjkiZaruNCQ2arNQ01I1atiK4rcFpBzxm3693WtThY3yA6ChsgbQUA7WpLRvaUBnsic2lnbmVkU3RhdGUiOiJnbHNxSWpXcHZYMjR0cFQ2QTN4Ym12YnI1RkJKaDFQayIsImRhdGEiOnsibm9uY2UiOiJndEdUa2dLdjBHa21mN2E5RWd0MGI5bmxOS0kzR2pYTCIsImNpcGhlcnRleHQiOiJoU2pyNGRydUlJSE5yd3Y0ZkZNWmRTUWNrcG5mZ09GU2svNVBJZUxMOHA4Smdyc09MUm9BNVpCc2xMcnI3SjVsYm1QamlZVTZXN1cvIn0sInNlbGVjdGVkSW1hZ2VJZCI6MTA1LCJkb3VibGVOYW1lIjoiaWZyLjNib3QiLCJyYW5kb21Sb29tIjoiZGY5NzFjZjAtMDkzMi00NGJhLWI1YTktYzg3Y2RkOGUxNmJjIiwiYXBwSWQiOiJ0ZXN0LnRocmVlZm9sZGxvZ2luIn0=';
+const testSignedEmailIdentifier =
+    'LouB5RT/tmQxfW1M2unm/khafCu0ib4cpsKpm9ETwKgjlhhb4cV/Qw5T0vMMnEpcOKS0Bq0pBjFMOkEgGBnYDXsgImVtYWlsIjogIm1hdGhpYXMuZGUud2VlcmR0QGdtYWlsLmNvbSIsICJpZGVudGlmaWVyIjogInRhaWsuM2JvdCIgfQ==';
+
 describe('Crypto', () => {
     beforeAll(async callback => {
         await ready;
@@ -77,7 +81,8 @@ describe('ThreefoldLogin', () => {
             threeFoldAPIHost,
             appId,
             seedPhrase,
-            redirectUrl
+            redirectUrl,
+            kycBackendUrl
         );
         await login.init();
 
@@ -89,7 +94,8 @@ describe('ThreefoldLogin', () => {
             threeFoldAPIHost,
             appId,
             seedPhrase,
-            redirectUrl
+            redirectUrl,
+            kycBackendUrl
         );
         expect(login).toBeInstanceOf(ThreefoldLogin);
     });
@@ -99,10 +105,11 @@ describe('ThreefoldLogin', () => {
         expect(login.appId).toBe(appId);
         expect(login.seedPhrase).toBe(seedPhrase);
         expect(login.redirectUrl).toBe(redirectUrl);
+        expect(login.kycBackendApiUrl).toBe(kycBackendUrl);
     });
 
-    it('should return login url', async () => {
-        const loginUrl = await login.generateLoginUrl(state);
+    it('should return login url', () => {
+        const loginUrl = login.generateLoginUrl(state);
 
         // @todo: add better test, parse url and check
         expect(typeof loginUrl).toBe('string');
@@ -118,7 +125,7 @@ describe('ThreefoldLogin', () => {
         expect(params.get('appid')).toStrictEqual(appId);
         expect(params.get('redirecturl')).toStrictEqual(redirectUrl);
 
-        const keyPair: KeyPair = await generateKeyPair(seedPhrase);
+        const keyPair: KeyPair = generateKeyPair(seedPhrase);
         const publickey = getEdPkInCurve(keyPair.publicKey);
 
         expect(params.get('publickey')).toStrictEqual(publickey);
@@ -184,6 +191,26 @@ describe('ThreefoldLogin', () => {
             },
             randomRoom: 'df971cf0-0932-44ba-b5a9-c87cdd8e16bc',
             selectedImageId: 105,
+        });
+    }, 1000);
+
+    it('should verify my signedEmailIdenfier', async () => {
+        const emailData = await login.verifySignedEmailIdenfier(
+            testSignedEmailIdentifier
+        );
+        expect(emailData).toStrictEqual({
+            email: 'mathias.de.weerdt@gmail.com',
+            identifier: 'taik.3bot',
+        });
+    }, 1000);
+
+    it('should verify my email', async () => {
+        const emailData = await login.verifySignedEmailIdenfier(
+            testSignedEmailIdentifier
+        );
+        expect(emailData).toStrictEqual({
+            email: 'mathias.de.weerdt@gmail.com',
+            identifier: 'taik.3bot',
         });
     }, 1000);
 });
