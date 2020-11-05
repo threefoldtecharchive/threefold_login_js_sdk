@@ -3,6 +3,15 @@ import { KeyPair, ready } from 'libsodium-wrappers';
 import { ThreefoldLogin, generateRandomSeedPhrase } from '../../src';
 import { parseSignedAttemptFromUrl } from '../../src/utils/parse';
 
+/**
+ * seedphrase used for staging app
+ *
+ * empty act name wear retreat moment grid mechanic near doll escape limb venue intact lecture husband mountain notice belt shadow virus tissue observe chronic
+ *
+ * doublename ifr.3bot
+ * email hd@jd.so
+ */
+
 const protocol = 'https:';
 
 // const rawHost = 'test-bot-front-end.io';
