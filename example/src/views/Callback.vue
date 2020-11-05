@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { ThreefoldLogin, generateRandomString } from '@threefoldjimber/threefold_login/dist';
-import { threefoldBackend, redirect_url, appId, seedPhrase } from '@/config/config'
+import { threefoldBackend, kycBackend, redirect_url, appId, seedPhrase } from '@/config/config'
 import { defineComponent } from 'vue'
 
 export default defineComponent({
@@ -14,7 +14,8 @@ export default defineComponent({
     const login = new ThreefoldLogin(threefoldBackend,
         appId,
         seedPhrase,
-        redirect_url);
+        redirect_url,
+        kycBackend);
 
     await login.init();
 
