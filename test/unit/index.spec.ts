@@ -147,7 +147,6 @@ describe('ThreefoldLogin', () => {
      * @todo: make mock api to test this easier
      */
     it('should parse and validate the signedAttemptRedirectUrl', async () => {
-
         /**
          * test case
          * profile data = {
@@ -168,14 +167,14 @@ describe('ThreefoldLogin', () => {
         );
 
         expect(Data).toStrictEqual({
-          "profile": {
-            "email": {
-              "email": "hd@jd.so",
-              "sei": null
-            }
-          },
-          "randomRoom": "d1e81e49-602b-4412-94ba-0a90a770a5f1",
-          "selectedImageId": 40
+            profile: {
+                email: {
+                    email: 'hd@jd.so',
+                    sei: null,
+                },
+            },
+            randomRoom: 'd1e81e49-602b-4412-94ba-0a90a770a5f1',
+            selectedImageId: 40,
         });
     }, 1000);
 });

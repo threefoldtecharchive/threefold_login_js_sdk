@@ -30,8 +30,8 @@
   "homepage": "https://github.com/rpidanny/typescript-package-template#readme",
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "npm run lint"
+      "pre-commit": "yarn lint && lint-staged",
+      "pre-push": "yarn test && yarn lint"
     }
   },
   "lint-staged": {
