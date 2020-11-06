@@ -49,10 +49,16 @@ describe('Crypto', () => {
         expect(mnemonic.split(' ').length).toBe(24);
     }, 1000);
 
+    it('should be able to generate a keypair', async () => {
+        const keyPair: KeyPair = await generateKeyPair(seedPhrase);
+        expect(typeof keyPair).toBe('object');
+    });
     it('should be able to get a ??? key', async () => {
         const keyPair: KeyPair = await generateKeyPair(seedPhrase);
         const edPkInCurve = getEdPkInCurve(keyPair.publicKey);
-        expect(edPkInCurve.length).toBe(44);
+        expect(edPkInCurve).toBe(
+            'haPnjRJSFG1mk388ZCk9ybi0h/Yx0QkOzPQLFVoYOBw='
+        );
     });
 });
 
@@ -204,13 +210,10 @@ describe('ThreefoldLogin', () => {
         });
     }, 1000);
 
-    it('should verify my email', async () => {
-        const emailData = await login.verifySignedEmailIdenfier(
+    it('should check if email is verified', async () => {
+        const emailData = await login.isEmailVerified(
             testSignedEmailIdentifier
         );
-        expect(emailData).toStrictEqual({
-            email: 'mathias.de.weerdt@gmail.com',
-            identifier: 'taik.3bot',
-        });
+        expect(emailData).toBe(true);
     }, 1000);
 });
