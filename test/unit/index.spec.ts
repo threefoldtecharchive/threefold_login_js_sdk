@@ -1,6 +1,10 @@
 import { generateKeyPair, getEdPkInCurve } from '../../src/utils/crypto';
 import { KeyPair, ready } from 'libsodium-wrappers';
-import { ThreefoldLogin, generateRandomSeedPhrase } from '../../src';
+import {
+    generateRandomSeedPhrase,
+    generateRandomString,
+    ThreefoldLogin,
+} from '../../src';
 import { parseSignedAttemptFromUrl } from '../../src/utils/parse';
 
 /**
@@ -37,6 +41,8 @@ const testSignedAttempt =
     'OQbbjNSmkvxtVDcjcnbN+AQjkiZaruNCQ2arNQ01I1atiK4rcFpBzxm3693WtThY3yA6ChsgbQUA7WpLRvaUBnsic2lnbmVkU3RhdGUiOiJnbHNxSWpXcHZYMjR0cFQ2QTN4Ym12YnI1RkJKaDFQayIsImRhdGEiOnsibm9uY2UiOiJndEdUa2dLdjBHa21mN2E5RWd0MGI5bmxOS0kzR2pYTCIsImNpcGhlcnRleHQiOiJoU2pyNGRydUlJSE5yd3Y0ZkZNWmRTUWNrcG5mZ09GU2svNVBJZUxMOHA4Smdyc09MUm9BNVpCc2xMcnI3SjVsYm1QamlZVTZXN1cvIn0sInNlbGVjdGVkSW1hZ2VJZCI6MTA1LCJkb3VibGVOYW1lIjoiaWZyLjNib3QiLCJyYW5kb21Sb29tIjoiZGY5NzFjZjAtMDkzMi00NGJhLWI1YTktYzg3Y2RkOGUxNmJjIiwiYXBwSWQiOiJ0ZXN0LnRocmVlZm9sZGxvZ2luIn0=';
 const testSignedEmailIdentifier =
     'LouB5RT/tmQxfW1M2unm/khafCu0ib4cpsKpm9ETwKgjlhhb4cV/Qw5T0vMMnEpcOKS0Bq0pBjFMOkEgGBnYDXsgImVtYWlsIjogIm1hdGhpYXMuZGUud2VlcmR0QGdtYWlsLmNvbSIsICJpZGVudGlmaWVyIjogInRhaWsuM2JvdCIgfQ==';
+const testSignedPhoneIdentifier =
+    'S5G4CUDXPQ3B8uvrnewlCV48/D2zd9A9QG3jhVpfWlFJlI3RWa1nOlCQMWRG7FZYhD7ljqMqvS/ja+1M68I3C3sgInBob25lIjogIiszMjQ5NDQ4NTc0MCIsICJpZGVudGlmaWVyIjogImhjYmZobmNkaGt2ZC4zYm90IiB9';
 
 describe('Crypto', () => {
     beforeAll(async callback => {
@@ -47,6 +53,11 @@ describe('Crypto', () => {
     it('should be able to generate random mnemonic(seedphrase)', () => {
         const mnemonic = generateRandomSeedPhrase();
         expect(mnemonic.split(' ').length).toBe(24);
+    }, 1000);
+
+    it('should be able to generate random string', () => {
+        const string = generateRandomString();
+        expect(typeof string).toBe('string');
     }, 1000);
 
     it('should be able to generate a keypair', async () => {
@@ -170,8 +181,8 @@ describe('ThreefoldLogin', () => {
      */
     it('should parse and validate the signedAttemptRedirectUrl', async () => {
         /**
-         * test case
-         * profile data = {
+     * test case
+     * profile data = {
           "profile": {
             "email": {
               "email": "hd@jd.so",
@@ -181,7 +192,7 @@ describe('ThreefoldLogin', () => {
           randomRoom: 'df971cf0-0932-44ba-b5a9-c87cdd8e16bc',
           selectedImageId: 105,
         }
-         */
+     */
 
         const Data = await login.parseAndValidateRedirectUrl(
             new URL(testRedirectUrl),
@@ -210,10 +221,27 @@ describe('ThreefoldLogin', () => {
         });
     }, 1000);
 
+    it('should verify my signedPhoneIdenfier', async () => {
+        const phoneData = await login.verifySignedPhoneIdenfier(
+            testSignedPhoneIdentifier
+        );
+        expect(phoneData).toStrictEqual({
+            phone: '+32494485740',
+            identifier: 'hcbfhncdhkvd.3bot',
+        });
+    }, 1000);
+
     it('should check if email is verified', async () => {
         const emailData = await login.isEmailVerified(
             testSignedEmailIdentifier
         );
         expect(emailData).toBe(true);
+    }, 1000);
+
+    it('should check if phone is verified', async () => {
+        const phoneData = await login.isPhoneVerified(
+            testSignedPhoneIdentifier
+        );
+        expect(phoneData).toBe(true);
     }, 1000);
 });

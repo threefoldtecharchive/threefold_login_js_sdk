@@ -155,6 +155,21 @@ export class ThreefoldLogin {
         return sei.data;
     }
 
+    async verifySignedPhoneIdenfier(
+        signedPhoneIdentifier: string
+    ): Promise<{ email: string; identifier: string }> {
+        const sei = await Axios.post(
+            `${this._kycBackendApiUrl}/verification/verify-spi`,
+            { signedPhoneIdentifier: signedPhoneIdentifier }
+        );
+
+        if (sei.status !== 200) {
+            throw Error('No valid response');
+        }
+
+        return sei.data;
+    }
+
     async isEmailVerified(signedEmailIdentifier: string): Promise<boolean> {
         try {
             const emailData = await this.verifySignedEmailIdenfier(
@@ -162,6 +177,18 @@ export class ThreefoldLogin {
             );
 
             return !!emailData;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    async isPhoneVerified(signedPhoneIdentifier: string): Promise<boolean> {
+        try {
+            const phoneData = await this.verifySignedPhoneIdenfier(
+                signedPhoneIdentifier
+            );
+
+            return !!phoneData;
         } catch (e) {
             return false;
         }

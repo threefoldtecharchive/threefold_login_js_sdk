@@ -3,20 +3,30 @@
         <p>Threefold login example, please choose a type of login</p>
         <div class="buttons">
             <button @click="loginWithCustomScope({email: false})">Authenticate and get the users email.</button>
+            <button @click="loginWithCustomScope({phone: false})">Authenticate and get the users phone.</button>
             <button @click="loginWithCustomScope({derivedSeed: false})">Authenticate and get the derived seed.</button>
             <button @click="loginWithCustomScope({email: false, derivedSeed: false})">Authenticate and get the users email and derived seed.</button>
+            <button @click="loginWithCustomScope({email: false, phone:false, derivedSeed: false})">Authenticate and get the users email, phone and derived seed.</button>
             <br>
             <button @click="loginWithCustomScope({email: true})">Authenticate and get the users email.[Mandatory]</button>
+            <button @click="loginWithCustomScope({phone: true})">Authenticate and get the users phone.[Mandatory]</button>
             <button @click="loginWithCustomScope({derivedSeed: true})">Authenticate and get the derived seed.[Mandatory]</button>
             <button @click="loginWithCustomScope({email: true, derivedSeed: true})">Authenticate and get the users email and derived seed.[Mandatory]</button>
+            <button @click="loginWithCustomScope({email: true, phone:true, derivedSeed: true})">Authenticate and get the users email, phone and derived seed.[Mandatory]</button>
         </div>
 
 
+      <div>
         <p>Login object</p>
         <pre>{{profile}}</pre>
 
         <p>Email object (Valid if it contains data)</p>
         <pre>{{signedEmailIdentifier}}</pre>
+
+        <p>Phone object (Valid if it contains data)</p>
+        <pre>{{signedPhoneIdentifier}}</pre>
+      </div>
+
     </div>
 </template>
 
@@ -27,6 +37,7 @@
 
     const profile = ref({});
     const signedEmailIdentifier = ref({});
+    const signedPhoneIdentifier = ref({});
 
     const popupCenter = (url: string, title: string, w: number, h: number) => {
         // Fixes dual-screen position                             Most browsers      Firefox
@@ -77,8 +88,16 @@
         window.onmessage = async (e: MessageEvent) => {
             if (e.data.message === 'threefoldLoginRedirectSuccess') {
                 profile.value = e.data.profileData
-                console.log("SEI. ", e.data.profileData.profile.email.sei)
-                signedEmailIdentifier.value = await login.verifySignedEmailIdenfier(e.data.profileData.profile.email.sei)
+                const sei = e.data.profileData?.profile?.email?.sei;
+                if (sei){
+                    console.log("SEI. ", sei)
+                  signedPhoneIdentifier.value = await login.verifySignedEmailIdenfier(sei)
+                }
+              const spi = e.data.profileData?.profile?.email?.spi;
+              if (spi){
+                console.log("SPI. ", spi)
+                signedPhoneIdentifier.value = await login.verifySignedPhoneIdenfier(spi)
+              }
                 popup?.close();
             }
         };
@@ -86,7 +105,7 @@
 
     export default defineComponent({
         setup() {
-            return { loginWithCustomScope, profile, signedEmailIdentifier }
+            return { loginWithCustomScope, profile, signedEmailIdentifier, signedPhoneIdentifier }
         }
     })
 </script>
