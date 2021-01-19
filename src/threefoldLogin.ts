@@ -123,7 +123,7 @@ export class ThreefoldLogin {
         return {
             selectedImageId: signResultObject.selectedImageId,
             randomRoom: signResultObject.randomRoom,
-            profile: JSON.parse(profileData),
+            profile: { doubleName, ...JSON.parse(profileData) },
         };
     }
 

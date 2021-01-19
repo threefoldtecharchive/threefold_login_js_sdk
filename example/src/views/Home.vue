@@ -2,12 +2,14 @@
     <div class="home">
         <p>Threefold login example, please choose a type of login</p>
         <div class="buttons">
+            <button @click="loginWithCustomScope({doubleName: false})">Authenticate and get the users name.</button>
             <button @click="loginWithCustomScope({email: false})">Authenticate and get the users email.</button>
             <button @click="loginWithCustomScope({phone: false})">Authenticate and get the users phone.</button>
             <button @click="loginWithCustomScope({derivedSeed: false})">Authenticate and get the derived seed.</button>
             <button @click="loginWithCustomScope({email: false, derivedSeed: false})">Authenticate and get the users email and derived seed.</button>
             <button @click="loginWithCustomScope({email: false, phone:false, derivedSeed: false})">Authenticate and get the users email, phone and derived seed.</button>
             <br>
+            <button @click="loginWithCustomScope({doubleName: true})">Authenticate and get the users name.[Mandatory]</button>
             <button @click="loginWithCustomScope({email: true})">Authenticate and get the users email.[Mandatory]</button>
             <button @click="loginWithCustomScope({phone: true})">Authenticate and get the users phone.[Mandatory]</button>
             <button @click="loginWithCustomScope({derivedSeed: true})">Authenticate and get the derived seed.[Mandatory]</button>
