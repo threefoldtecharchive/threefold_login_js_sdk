@@ -201,6 +201,7 @@ describe('ThreefoldLogin', () => {
 
         expect(Data).toStrictEqual({
             profile: {
+                doubleName: 'ifr.3bot',
                 email: {
                     email: 'hd@jd.so',
                     sei: null,
