@@ -19,9 +19,9 @@ import { ThreefoldLogin, generateRandomString } from '@threefoldjimber/threefold
 /***/
 
 const threeFoldAPIHost = "{{host endpoint}}";
-const appId = "{{yo're appId}}";
-const seedPhrase = "{{seedphrase}}";
-const redirectUrl = 'url to redirect';
+const appId = "{{your appId}}"; // should always be your domain (eg myapp.com)
+const seedPhrase = "{{seedphrase}}"; // the secret of your app; preferably a backend secret.
+const redirectUrl = 'url to redirect'; // not full url, only the path eg '/callback'
 
 const login = ThreefoldLogin( threeFoldAPIHost,
                               appId,
@@ -42,7 +42,7 @@ import { ThreefoldLogin } from '@threefoldjimber/threefold_login';
 /***/
 
 const threeFoldAPIHost = "{{host endpoint}}";
-const appId = "{{yo're appId}}";
+const appId = "{{your appId}}";
 const seedPhrase = "{{seedphrase}}";
 const redirectUrl = 'url to redirect';
 
