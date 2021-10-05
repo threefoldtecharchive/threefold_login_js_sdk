@@ -2,7 +2,7 @@ import sodium, { KeyPair } from 'libsodium-wrappers';
 import { decrypt, generateKeyPair, getEdPkInCurve } from './utils/crypto';
 import { parseSignedAttemptFromUrl } from './utils/parse';
 import { encodeUTF8, decodeBase64 } from 'tweetnacl-util';
-import Axios from 'axios';
+import Axios, { AxiosResponse } from 'axios';
 
 export class ThreefoldLogin {
     private readonly _threeFoldApiUrl: string;
@@ -130,20 +130,20 @@ export class ThreefoldLogin {
     private async getPublicKeyForDoubleName(
         doubleName: string
     ): Promise<Uint8Array> {
-        const userData = await Axios.get(
+        const userData: AxiosResponse = await Axios.get(
             `${this._threeFoldApiUrl}/api/users/${doubleName}`
         );
-        if (!userData?.data?.publicKey) {
+        if (!userData.data['publicKey']) {
             throw Error('no publicKey');
         }
 
-        return decodeBase64(userData.data.publicKey);
+        return decodeBase64(userData.data['publicKey']);
     }
 
     async verifySignedEmailIdenfier(
         signedEmailIdentifier: string
     ): Promise<{ email: string; identifier: string }> {
-        const sei = await Axios.post(
+        const sei: AxiosResponse = await Axios.post(
             `${this._kycBackendApiUrl}/verification/verify-sei`,
             { signedEmailIdentifier: signedEmailIdentifier }
         );
@@ -158,7 +158,7 @@ export class ThreefoldLogin {
     async verifySignedPhoneIdenfier(
         signedPhoneIdentifier: string
     ): Promise<{ email: string; identifier: string }> {
-        const sei = await Axios.post(
+        const sei: AxiosResponse = await Axios.post(
             `${this._kycBackendApiUrl}/verification/verify-spi`,
             { signedPhoneIdentifier: signedPhoneIdentifier }
         );
