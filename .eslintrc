@@ -19,8 +19,7 @@
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended", // Uses the recommended rules from the @typescript-eslint/eslint-plugin
-    "prettier/@typescript-eslint", // To disable ESLint rules from @typescript-eslint/eslint-plugin that would conflict with prettier
-    "plugin:prettier/recommended" // To display prettier errors as ESLint errors. Make sure this is always the last configuration.
+    "prettier"
   ],
   "rules": {
     "@typescript-eslint/no-empty-interface": "off",

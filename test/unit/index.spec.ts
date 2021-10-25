@@ -45,9 +45,10 @@ const testSignedPhoneIdentifier =
     'S5G4CUDXPQ3B8uvrnewlCV48/D2zd9A9QG3jhVpfWlFJlI3RWa1nOlCQMWRG7FZYhD7ljqMqvS/ja+1M68I3C3sgInBob25lIjogIiszMjQ5NDQ4NTc0MCIsICJpZGVudGlmaWVyIjogImhjYmZobmNkaGt2ZC4zYm90IiB9';
 
 describe('Crypto', () => {
-    beforeAll(async callback => {
-        await ready;
-        callback();
+    beforeAll(callback => {
+        ready.then(() => {
+            callback();
+        });
     }, 1000);
 
     it('should be able to generate random mnemonic(seedphrase)', () => {

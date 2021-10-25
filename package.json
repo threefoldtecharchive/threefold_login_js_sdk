@@ -1,6 +1,6 @@
 {
   "name": "@threefoldjimber/threefold_login",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "threefold login js sdk",
   "main": "dist/index.js",
   "types": "dist/index.d.js",
@@ -10,6 +10,7 @@
     "lint:fix": "npm run lint -- --fix",
     "test": "npm run lint && jest ./test/*",
     "dev": "ts-node src/index.ts",
+    "prepare": "husky install",
     "semantic-release": "semantic-release"
   },
   "repository": {
@@ -62,6 +63,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@types/jest": "^27.0.2",
     "axios": "^0.21.0",
     "bip39": "^3.0.2",
     "libsodium-wrappers": "^0.7.8",
