@@ -925,8 +925,10 @@
   resolved "https://registry.yarnpkg.com/@soda/get-current-script/-/get-current-script-1.0.2.tgz"
   integrity sha512-T7VNNlYVM1SgQ+VsMYhnDkcGmWhQdL0bDyGm5TlQ3GBXnJscEClUUOKduWTmm2zCnvNLC1hc3JpuXjs/nFOc5w==
 
-"@threefoldjimber/threefold_login@file:..":
-  version "1.2.1"
+"@threefoldjimber/threefold_login@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@threefoldjimber/threefold_login/-/threefold_login-1.4.0.tgz#5d84b1ecbdb8574a6146ed16f995997a4c1213a1"
+  integrity sha512-4v+goRhgtnYiBMba29/Pw+Ky6gVZI81AysLbRby1+ynjyop73X6L71BscP+tPZ4dTZys0tbtm5LNgHXwa8GDew==
   dependencies:
     axios "^0.21.0"
     bip39 "^3.0.2"
