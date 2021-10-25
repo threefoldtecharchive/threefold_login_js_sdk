@@ -63,6 +63,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@types/jest": "^27.0.2",
     "axios": "^0.21.0",
     "bip39": "^3.0.2",
     "libsodium-wrappers": "^0.7.8",
