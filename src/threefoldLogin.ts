@@ -83,6 +83,22 @@ export class ThreefoldLogin {
         await sodium.ready;
 
         const { signedAttempt, doubleName } = parseSignedAttemptFromUrl(url);
+        return await this.validateSignedAttempt(
+            signedAttempt,
+            doubleName,
+            state
+        );
+    }
+
+    async validateSignedAttempt(
+        signedAttempt: string,
+        doubleName: string,
+        state: string
+    ): Promise<{
+        selectedImageId: number;
+        randomRoom: string;
+        profile: Record<string, unknown>;
+    }> {
         const decodedSignedAttempt = decodeBase64(signedAttempt);
 
         const userPublicKey: Uint8Array = await this.getPublicKeyForDoubleName(
