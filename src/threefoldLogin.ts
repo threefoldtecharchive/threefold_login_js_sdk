@@ -58,7 +58,7 @@ export class ThreefoldLogin {
 
     const url = new URL(this._threeFoldApiUrl);
 
-    const params = {
+    const params : any = {
       state: state,
       appid: this._appId,
       publickey: publickey,
@@ -175,8 +175,7 @@ export class ThreefoldLogin {
     signedIdentifier: string,
   ): Promise<any> {
 
-    const isIdentified = await Axios.post(`${this._kycBackendApiUrl}
-    /verification/verify-identity-identifier?identifier=${identifier}`, {
+    const isIdentified = await Axios.post(`${this._kycBackendApiUrl}/verification/verify-identity-identifier?identifier=${identifier}`, {
       identifier: signedIdentifier,
     })
 
@@ -186,7 +185,6 @@ export class ThreefoldLogin {
 
     return isIdentified.data;
   }
-
 
   async isEmailVerified(signedEmailIdentifier: string): Promise<boolean> {
     try {

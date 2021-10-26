@@ -2,6 +2,13 @@
   <div class="home">
     <h2>Threefold login example, please choose a type of login</h2>
     <br>
+
+    <div style="text-align: left; width: 50%; margin: auto">
+      <span> All scopes </span>
+      <input type="checkbox" v-model="selectedAllValue" :checked="selectedAllValue"/>
+    </div>
+
+    <br>
     <div class="flex-container">
       <span style="font-size: 18px; font-weight: 600; width: 40%">Item</span>
       <span style="font-size: 18px; font-weight: 600; width: 30%; text-align: center">Add to scope</span>
@@ -19,7 +26,7 @@
       </div>
     </div>
     <div class="flex-container">
-      <input style="padding: 5px" @keyup.enter="items.push({'value': scopeName})" v-model="scopeName" type="text">
+      <input style="padding: 5px" @keyup.enter="addToScope" v-model="scopeName" type="text">
       <div></div>
       <div></div>
     </div>
@@ -48,6 +55,26 @@
       <br>
       <h3>Phone object (Valid if it contains data)</h3>
       <pre>{{ signedPhoneIdentifier }}</pre>
+
+      <br>
+      <h3>Identity Name  (Valid if it contains data)</h3>
+      <pre>{{ signedIdentityNameIdentifier }}</pre>
+
+      <br>
+      <h3>Identity Gender  (Valid if it contains data)</h3>
+      <pre>{{ signedIdentityGenderIdentifier }}</pre>
+
+      <br>
+      <h3>Identity Document Meta  (Valid if it contains data)</h3>
+      <pre>{{ signedIdentityDocumentMetaIdentifier }}</pre>
+
+      <br>
+      <h3>Identity Country  (Valid if it contains data)</h3>
+      <pre>{{ signedIdentityCountryIdentifier }}</pre>
+
+      <br>
+      <h3>Identity DOB  (Valid if it contains data)</h3>
+      <pre>{{ signedIdentityDOBIdentifier }}</pre>
     </div>
 
   </div>
@@ -56,7 +83,7 @@
 <script lang="ts">
 import {generateRandomString, ThreefoldLogin} from '../../../src/index';
 import {appId, kycBackend, redirect_url, seedPhrase, threefoldBackend} from '@/config/config';
-import {defineComponent, ref} from 'vue';
+import {defineComponent, ref, watch} from 'vue';
 import type {Scope} from "@/types/home";
 
 const profile = ref({});
@@ -69,8 +96,9 @@ const signedIdentityDocumentMetaIdentifier = ref({});
 const signedIdentityDOBIdentifier = ref({});
 
 const dictScopes = ref<any>({})
-
 const scopeName = ref<string>('');
+const selectedAllValue = ref<boolean>(false);
+
 
 const items = ref([
   {
@@ -138,7 +166,6 @@ const popupCenter = (url: string, title: string, w: number, h: number) => {
 
 // TODO: make types
 const toggleScope = async (item: Scope) => {
-  console.log(item)
   let selectedItem = dictScopes.value.hasOwnProperty(item.value)
 
   if (!selectedItem) {
@@ -161,6 +188,11 @@ const toggleMandatory = async (item: Scope) => {
 
 }
 
+const addToScope = () => {
+  items.value.push({'value': scopeName.value})
+  dictScopes.value[scopeName.value] = true
+}
+
 const loginWithCustomScope = async (scope: Record<string, boolean>) => {
   const login = new ThreefoldLogin(threefoldBackend,
     appId,
@@ -176,6 +208,7 @@ const loginWithCustomScope = async (scope: Record<string, boolean>) => {
     scope: JSON.stringify(scope),
   };
 
+
   window.localStorage.setItem("state", state)
   const loginUrl = login.generateLoginUrl(state, extraParams);
 
@@ -189,16 +222,40 @@ const loginWithCustomScope = async (scope: Record<string, boolean>) => {
         console.log("SEI. ", sei)
         signedEmailIdentifier.value = await login.verifySignedEmailIdenfier(sei)
       }
-      const spi = e.data.profileData?.profile?.email?.spi;
+      const spi = e.data.profileData?.profile?.phone?.spi;
       if (spi) {
         console.log("SPI. ", spi)
         signedPhoneIdentifier.value = await login.verifySignedPhoneIdenfier(spi)
       }
 
-      const sIdentityNameIdentifier = e.data.profileData?.profile?.identityName?.signedIdentityNameIdentifier;
-      if (signedIdentityNameIdentifier) {
+      const sIdentityNameIdentifier =  e.data.profileData?.profile?.identityName?.signedIdentityNameIdentifier
+      if (sIdentityNameIdentifier) {
         console.log("Signed Identity Name Identifier. ", signedIdentityNameIdentifier)
         signedIdentityNameIdentifier.value = await login.verifySignedIdentityIdentifier('signedIdentityNameIdentifier', sIdentityNameIdentifier)
+      }
+
+      const sIdentityGenderIdentifier =  e.data.profileData?.profile?.identityGender?.signedIdentityGenderIdentifier
+      if (sIdentityGenderIdentifier) {
+        console.log("Signed Identity Gender Identifier. ", sIdentityGenderIdentifier)
+        signedIdentityGenderIdentifier.value = await login.verifySignedIdentityIdentifier('signedIdentityGenderIdentifier', sIdentityGenderIdentifier)
+      }
+
+      const sIdentityDOBIdentifier =  e.data.profileData?.profile?.identityDOB?.signedIdentityDOBIdentifier
+      if (sIdentityDOBIdentifier) {
+        console.log("Signed Identity DOB Identifier. ", sIdentityDOBIdentifier)
+        signedIdentityDOBIdentifier.value = await login.verifySignedIdentityIdentifier('signedIdentityDOBIdentifier', sIdentityDOBIdentifier)
+      }
+
+      const sIdentityCountryIdentifier =  e.data.profileData?.profile?.identityCountry?.signedIdentityCountryIdentifier
+      if (sIdentityCountryIdentifier) {
+        console.log("Signed Identity Country Identifier. ", sIdentityCountryIdentifier)
+        signedIdentityCountryIdentifier.value = await login.verifySignedIdentityIdentifier('signedIdentityCountryIdentifier', sIdentityCountryIdentifier)
+      }
+
+      const sIdentityDocumentMetaIdentifier =  e.data.profileData?.profile?.identityDocumentMeta?.signedIdentityDocumentMetaIdentifier
+      if (sIdentityDocumentMetaIdentifier) {
+        console.log("Signed Identity DocumentMeta Identifier. ", sIdentityDocumentMetaIdentifier)
+        signedIdentityDocumentMetaIdentifier.value = await login.verifySignedIdentityIdentifier('signedIdentityDocumentMetaIdentifier', sIdentityDocumentMetaIdentifier)
       }
 
       popup?.close();
@@ -206,18 +263,41 @@ const loginWithCustomScope = async (scope: Record<string, boolean>) => {
   };
 }
 
+watch(selectedAllValue, (isSelected, prevSelection) => {
+  if(isSelected) {
+     return items.value.forEach(item  => {
+       dictScopes.value[item.value] = true
+    })
+  }
+
+  return items.value.forEach(item  => {
+    delete dictScopes.value[item.value]
+  })
+
+
+})
+
+
 export default defineComponent({
   setup() {
     return {
       profile,
       signedEmailIdentifier,
       signedPhoneIdentifier,
+      signedIdentityNameIdentifier,
+      signedIdentityGenderIdentifier,
+      signedIdentityDOBIdentifier,
+      signedIdentityCountryIdentifier,
+      signedIdentityDocumentMetaIdentifier,
       items,
       dictScopes,
       scopeName,
+      selectedAllValue,
+      addToScope,
       loginWithCustomScope,
       toggleScope,
       toggleMandatory,
+
     }
   }
 })
