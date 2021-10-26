@@ -1,5 +1,17 @@
 <template>
   <div class="home">
+    <div style="display: flex; width: 100%; justify-content: flex-end; align-items: center">
+      <div style="margin-right: 16px">
+        <input type="radio" id="one" :value="Configurations.STAGING" v-model="environment">
+        <label for="one">Staging</label>
+      </div>
+      <div>
+        <input type="radio" id="two" :value="Configurations.PRODUCTION" v-model="environment">
+        <label for="two">Production</label>
+      </div>
+    </div>
+
+
     <h2>Threefold login example, please choose a type of login</h2>
     <br>
 
@@ -57,23 +69,23 @@
       <pre>{{ signedPhoneIdentifier }}</pre>
 
       <br>
-      <h3>Identity Name  (Valid if it contains data)</h3>
+      <h3>Identity Name (Valid if it contains data)</h3>
       <pre>{{ signedIdentityNameIdentifier }}</pre>
 
       <br>
-      <h3>Identity Gender  (Valid if it contains data)</h3>
+      <h3>Identity Gender (Valid if it contains data)</h3>
       <pre>{{ signedIdentityGenderIdentifier }}</pre>
 
       <br>
-      <h3>Identity Document Meta  (Valid if it contains data)</h3>
+      <h3>Identity Document Meta (Valid if it contains data)</h3>
       <pre>{{ signedIdentityDocumentMetaIdentifier }}</pre>
 
       <br>
-      <h3>Identity Country  (Valid if it contains data)</h3>
+      <h3>Identity Country (Valid if it contains data)</h3>
       <pre>{{ signedIdentityCountryIdentifier }}</pre>
 
       <br>
-      <h3>Identity DOB  (Valid if it contains data)</h3>
+      <h3>Identity DOB (Valid if it contains data)</h3>
       <pre>{{ signedIdentityDOBIdentifier }}</pre>
     </div>
 
@@ -82,9 +94,11 @@
 
 <script lang="ts">
 import {generateRandomString, ThreefoldLogin} from '../../../src/index';
-import {appId, kycBackend, redirect_url, seedPhrase, threefoldBackend} from '@/config/config';
+import {environment, ProductionConfig, StagingConfig,} from '@/config/config';
 import {defineComponent, ref, watch} from 'vue';
 import type {Scope} from "@/types/home";
+import {Configurations} from "@/enums";
+import {useLocalStorage} from "@vueuse/core";
 
 const profile = ref({});
 const signedEmailIdentifier = ref({});
@@ -98,7 +112,6 @@ const signedIdentityDOBIdentifier = ref({});
 const dictScopes = ref<any>({})
 const scopeName = ref<string>('');
 const selectedAllValue = ref<boolean>(false);
-
 
 const items = ref([
   {
@@ -190,15 +203,40 @@ const toggleMandatory = async (item: Scope) => {
 
 const addToScope = () => {
   items.value.push({'value': scopeName.value})
-  dictScopes.value[scopeName.value] = true
+  dictScopes.value[scopeName.value] = false
 }
 
 const loginWithCustomScope = async (scope: Record<string, boolean>) => {
-  const login = new ThreefoldLogin(threefoldBackend,
-    appId,
-    seedPhrase,
-    redirect_url,
-    kycBackend);
+  let login: ThreefoldLogin;
+
+  switch (environment.value) {
+    case Configurations.STAGING:
+      login = new ThreefoldLogin(StagingConfig.threefoldBackend,
+        StagingConfig.appId,
+        StagingConfig.seedPhrase,
+        StagingConfig.redirect_url,
+        StagingConfig.kycBackend)
+
+      break;
+
+    case Configurations.PRODUCTION:
+      login = new ThreefoldLogin(ProductionConfig.threefoldBackend,
+        ProductionConfig.appId,
+        ProductionConfig.seedPhrase,
+        ProductionConfig.redirect_url,
+        ProductionConfig.kycBackend)
+
+      break;
+
+    default:
+      login = new ThreefoldLogin(ProductionConfig.threefoldBackend,
+        ProductionConfig.appId,
+        ProductionConfig.seedPhrase,
+        ProductionConfig.redirect_url,
+        ProductionConfig.kycBackend)
+
+      break;
+  }
 
   await login.init();
 
@@ -228,31 +266,31 @@ const loginWithCustomScope = async (scope: Record<string, boolean>) => {
         signedPhoneIdentifier.value = await login.verifySignedPhoneIdenfier(spi)
       }
 
-      const sIdentityNameIdentifier =  e.data.profileData?.profile?.identityName?.signedIdentityNameIdentifier
+      const sIdentityNameIdentifier = e.data.profileData?.profile?.identityName?.signedIdentityNameIdentifier
       if (sIdentityNameIdentifier) {
         console.log("Signed Identity Name Identifier. ", signedIdentityNameIdentifier)
         signedIdentityNameIdentifier.value = await login.verifySignedIdentityIdentifier('signedIdentityNameIdentifier', sIdentityNameIdentifier)
       }
 
-      const sIdentityGenderIdentifier =  e.data.profileData?.profile?.identityGender?.signedIdentityGenderIdentifier
+      const sIdentityGenderIdentifier = e.data.profileData?.profile?.identityGender?.signedIdentityGenderIdentifier
       if (sIdentityGenderIdentifier) {
         console.log("Signed Identity Gender Identifier. ", sIdentityGenderIdentifier)
         signedIdentityGenderIdentifier.value = await login.verifySignedIdentityIdentifier('signedIdentityGenderIdentifier', sIdentityGenderIdentifier)
       }
 
-      const sIdentityDOBIdentifier =  e.data.profileData?.profile?.identityDOB?.signedIdentityDOBIdentifier
+      const sIdentityDOBIdentifier = e.data.profileData?.profile?.identityDOB?.signedIdentityDOBIdentifier
       if (sIdentityDOBIdentifier) {
         console.log("Signed Identity DOB Identifier. ", sIdentityDOBIdentifier)
         signedIdentityDOBIdentifier.value = await login.verifySignedIdentityIdentifier('signedIdentityDOBIdentifier', sIdentityDOBIdentifier)
       }
 
-      const sIdentityCountryIdentifier =  e.data.profileData?.profile?.identityCountry?.signedIdentityCountryIdentifier
+      const sIdentityCountryIdentifier = e.data.profileData?.profile?.identityCountry?.signedIdentityCountryIdentifier
       if (sIdentityCountryIdentifier) {
         console.log("Signed Identity Country Identifier. ", sIdentityCountryIdentifier)
         signedIdentityCountryIdentifier.value = await login.verifySignedIdentityIdentifier('signedIdentityCountryIdentifier', sIdentityCountryIdentifier)
       }
 
-      const sIdentityDocumentMetaIdentifier =  e.data.profileData?.profile?.identityDocumentMeta?.signedIdentityDocumentMetaIdentifier
+      const sIdentityDocumentMetaIdentifier = e.data.profileData?.profile?.identityDocumentMeta?.signedIdentityDocumentMetaIdentifier
       if (sIdentityDocumentMetaIdentifier) {
         console.log("Signed Identity DocumentMeta Identifier. ", sIdentityDocumentMetaIdentifier)
         signedIdentityDocumentMetaIdentifier.value = await login.verifySignedIdentityIdentifier('signedIdentityDocumentMetaIdentifier', sIdentityDocumentMetaIdentifier)
@@ -264,19 +302,16 @@ const loginWithCustomScope = async (scope: Record<string, boolean>) => {
 }
 
 watch(selectedAllValue, (isSelected, prevSelection) => {
-  if(isSelected) {
-     return items.value.forEach(item  => {
-       dictScopes.value[item.value] = true
+  if (isSelected) {
+    return items.value.forEach(item => {
+      dictScopes.value[item.value] = false
     })
   }
 
-  return items.value.forEach(item  => {
+  return items.value.forEach(item => {
     delete dictScopes.value[item.value]
   })
-
-
 })
-
 
 export default defineComponent({
   setup() {
@@ -293,6 +328,8 @@ export default defineComponent({
       dictScopes,
       scopeName,
       selectedAllValue,
+      environment,
+      Configurations,
       addToScope,
       loginWithCustomScope,
       toggleScope,
@@ -304,6 +341,10 @@ export default defineComponent({
 </script>
 
 <style>
+.home {
+  padding: 18px;
+}
+
 .flex-container {
   width: 50%;
   margin: auto;
@@ -324,6 +365,6 @@ export default defineComponent({
   font-weight: 600;
   font-size: 16px;
   cursor: pointer;
-
 }
+
 </style>

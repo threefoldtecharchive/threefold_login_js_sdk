@@ -5,17 +5,42 @@
 </template>
 
 <script lang="ts">
-import { ThreefoldLogin, generateRandomString } from '@threefoldjimber/threefold_login/dist';
-import { threefoldBackend, kycBackend, redirect_url, appId, seedPhrase } from '@/config/config'
-import { defineComponent } from 'vue'
+import {ThreefoldLogin, generateRandomString} from '@threefoldjimber/threefold_login/dist';
+import {StagingConfig, ProductionConfig, environment} from '@/config/config'
+import {useLocalStorage} from '@vueuse/core'
+import {defineComponent} from 'vue'
+import {Configurations} from "@/enums";
 
 export default defineComponent({
   async setup() {
-    const login = new ThreefoldLogin(threefoldBackend,
-        appId,
-        seedPhrase,
-        redirect_url,
-        kycBackend);
+    let login: ThreefoldLogin;
+
+    switch (environment.value) {
+      case Configurations.STAGING:
+        login = new ThreefoldLogin(StagingConfig.threefoldBackend,
+          StagingConfig.appId,
+          StagingConfig.seedPhrase,
+          StagingConfig.redirect_url,
+          StagingConfig.kycBackend);
+
+        break;
+
+      case Configurations.PRODUCTION:
+        login = new ThreefoldLogin(ProductionConfig.threefoldBackend,
+          ProductionConfig.appId,
+          ProductionConfig.seedPhrase,
+          ProductionConfig.redirect_url,
+          ProductionConfig.kycBackend);
+
+        break;
+
+      default:
+        login = new ThreefoldLogin(ProductionConfig.threefoldBackend,
+          ProductionConfig.appId,
+          ProductionConfig.seedPhrase,
+          ProductionConfig.redirect_url,
+          ProductionConfig.kycBackend);
+    }
 
     await login.init();
 
