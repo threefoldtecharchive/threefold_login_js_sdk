@@ -93,7 +93,7 @@
 </template>
 
 <script lang="ts">
-import {generateRandomString, ThreefoldLogin} from "@threefoldjimber/threefold_login";
+import {generateRandomString, ThreefoldLogin} from "@threefoldjimber/threefold_login/dist";
 import {environment, ProductionConfig, StagingConfig,} from '@/config/config';
 import type {Scope} from "@/types/home";
 import {Configurations} from "@/enums";
