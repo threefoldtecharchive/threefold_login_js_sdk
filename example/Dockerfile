@@ -3,6 +3,7 @@ FROM node:12 as frontend-builder
 WORKDIR /app
 
 COPY ./ .
+RUN yarn && yarn build
 
 WORKDIR example
 RUN yarn && yarn build

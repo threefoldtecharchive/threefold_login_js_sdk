@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { ThreefoldLogin } from '../../../src';
+import { ThreefoldLogin } from '@threefoldjimber/threefold_login';
 import {StagingConfig, ProductionConfig, environment} from '@/config/config'
 import {defineComponent} from 'vue'
 import {Configurations} from "@/enums";

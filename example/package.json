@@ -7,7 +7,7 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
-    "@threefoldjimber/threefold_login": "file:../",
+    "@threefoldjimber/threefold_login": "file:../dist",
     "@vueuse/core": "^5.3.0",
     "core-js": "^3.6.5",
     "vue": "^3.0.0",
