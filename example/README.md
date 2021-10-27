@@ -17,3 +17,11 @@ yarn build
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+
+### build Docker image
+
+run from project root not example root
+```bash
+docker build -t threefoldjimber/login-example:latest -f ./example/Dockerfile
+```
