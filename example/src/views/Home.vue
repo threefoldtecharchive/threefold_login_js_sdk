@@ -95,10 +95,9 @@
 <script lang="ts">
 import {generateRandomString, ThreefoldLogin} from '../../../src/index';
 import {environment, ProductionConfig, StagingConfig,} from '@/config/config';
-import {defineComponent, ref, watch} from 'vue';
 import type {Scope} from "@/types/home";
 import {Configurations} from "@/enums";
-import {useLocalStorage} from "@vueuse/core";
+import {defineComponent, ref, watch} from "vue";
 
 const profile = ref({});
 const signedEmailIdentifier = ref({});
@@ -301,14 +300,14 @@ const loginWithCustomScope = async (scope: Record<string, boolean>) => {
   };
 }
 
-watch(selectedAllValue, (isSelected, prevSelection) => {
+watch(selectedAllValue, (isSelected: boolean, prevSelection: boolean) => {
   if (isSelected) {
-    return items.value.forEach(item => {
+    return items.value.forEach((item: any) => {
       dictScopes.value[item.value] = false
     })
   }
 
-  return items.value.forEach(item => {
+  return items.value.forEach((item: any) => {
     delete dictScopes.value[item.value]
   })
 })

@@ -5,9 +5,8 @@
 </template>
 
 <script lang="ts">
-import {ThreefoldLogin, generateRandomString} from '@threefoldjimber/threefold_login/dist';
+import { ThreefoldLogin } from '../../../src';
 import {StagingConfig, ProductionConfig, environment} from '@/config/config'
-import {useLocalStorage} from '@vueuse/core'
 import {defineComponent} from 'vue'
 import {Configurations} from "@/enums";
 
