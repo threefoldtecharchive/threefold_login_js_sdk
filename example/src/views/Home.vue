@@ -24,15 +24,21 @@
     </div>
 
     <div class="flex-container">
-      <div style="width: 30%; text-align: center">Data URL to sign:</div>
+      <div style="width: 30%; text-align: center">URL</div>
       <input style="padding: 5px;  width: 30%; text-align: center" @keyup.enter="" v-model="signDataValue">
       <div style="width: 30%; text-align: center"><input style="text-align: center" type="checkbox" v-model="isJsonUrl">
       </div>
     </div>
     <br>
+    <div class="flex-container">
+      <div style="width: 30%; text-align: center">Friendly name</div>
+      <input style="padding: 5px;  width: 30%; text-align: center" @keyup.enter="" v-model="friendlyNameDataValue">
+      <div style="width: 30%; text-align: center"></div>
+    </div>
+    <br>
     <br>
     <h3>Data object</h3>
-    <span>{"dataUrl" : "{{ signDataValue }}", "isJson": "{{ isJsonUrl }}"}</span>
+    <span>{"dataUrl" : "{{ signDataValue }}", "isJson": "{{ isJsonUrl }}", "friendlyName" : "{{friendlyNameDataValue}}"}</span>
     <br>
     <br>
     <input class="button" type="submit" @click="signDataFromUrl(signDataValue)" value="Send request">
@@ -153,6 +159,7 @@ const scopeName = ref<string>('');
 const selectedAllValue = ref<boolean>(false);
 
 const signDataValue = ref<string>('');
+const friendlyNameDataValue = ref<string>('');
 
 const items = ref([
   {
@@ -285,7 +292,7 @@ const signDataFromUrl = async (dataUrl: string) => {
   window.localStorage.setItem("state", state)
 
   const hashedUrl: string = hashData(signDataValue.value);
-  const signUrl = login.generateSignUrl(state, hashedUrl, signDataValue.value, isJsonUrl.value, login.redirectUrl)
+  const signUrl = login.generateSignUrl(state, hashedUrl, signDataValue.value, isJsonUrl.value, friendlyNameDataValue.value, login.redirectUrl)
 
   const popup = popupCenter(signUrl, 'Threefold login', 800, 550);
 
@@ -434,6 +441,7 @@ export default defineComponent({
       signDataValue,
       isJsonUrl,
       signedData,
+      friendlyNameDataValue,
       Configurations,
       addToScope,
       loginWithCustomScope,

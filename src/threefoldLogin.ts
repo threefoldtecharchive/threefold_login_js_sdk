@@ -77,6 +77,7 @@ export class ThreefoldLogin {
     dataHash: string,
     dataUrl: string,
     isJson: boolean,
+    friendlyName: string,
     redirectUrl: string
   ): string {
 
@@ -88,6 +89,7 @@ export class ThreefoldLogin {
       dataHash: dataHash,
       dataUrl: dataUrl,
       isJson: isJson,
+      friendlyName: friendlyName,
       redirectUrl: redirectUrl
 
     };
