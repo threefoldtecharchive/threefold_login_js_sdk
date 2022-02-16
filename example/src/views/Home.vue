@@ -12,7 +12,41 @@
     </div>
 
 
-    <h2>Threefold login example, please choose a type of login</h2>
+    <h2>THREEFOLD SIGN DATA</h2>
+    <br>
+    <br>
+
+    <div class="flex-container">
+      <div></div>
+      <div></div>
+      <div style="width: 30%; text-align: center"><span
+        style="font-size: 18px; font-weight: 600; width: 30%; text-align: center">Is JSON</span></div>
+    </div>
+
+    <div class="flex-container">
+      <div style="width: 30%; text-align: center">Data URL to sign:</div>
+      <input style="padding: 5px;  width: 30%; text-align: center" @keyup.enter="" v-model="signDataValue">
+      <div style="width: 30%; text-align: center"><input style="text-align: center" type="checkbox" v-model="isJsonUrl">
+      </div>
+    </div>
+    <br>
+    <br>
+    <h3>Data object</h3>
+    <span>{"dataUrl" : "{{ signDataValue }}", "isJson": "{{ isJsonUrl }}"}</span>
+    <br>
+    <br>
+    <input class="button" type="submit" @click="signDataFromUrl(signDataValue)" value="Send request">
+    <br>
+    <br>
+    <div>
+      <h3>SIGNED DATA</h3>
+      <pre>{{ signedData }}</pre>
+    </div>
+
+    <hr>
+    <br>
+
+    <h2>THREEFOLD LOGIN</h2>
     <br>
 
     <div style="text-align: left; width: 50%; margin: auto">
@@ -42,8 +76,10 @@
       <div></div>
       <div></div>
     </div>
-
     <br>
+    <hr>
+    <br>
+
     <div>
       <h3>Scope object</h3>
       {{ dictScopes }}
@@ -98,6 +134,8 @@ import {environment, ProductionConfig, StagingConfig,} from '@/config/config';
 import type {Scope} from "@/types/home";
 import {Configurations} from "@/enums";
 import {defineComponent, ref, watch} from "vue";
+import {stringify} from "ts-jest/dist/utils/json";
+import {hashData} from "../../../src/utils/crypto";
 
 const profile = ref({});
 const signedEmailIdentifier = ref({});
@@ -107,10 +145,14 @@ const signedIdentityGenderIdentifier = ref({});
 const signedIdentityCountryIdentifier = ref({});
 const signedIdentityDocumentMetaIdentifier = ref({});
 const signedIdentityDOBIdentifier = ref({});
+const signedData = ref({});
+const isJsonUrl = ref<boolean>(false)
 
 const dictScopes = ref<any>({})
 const scopeName = ref<string>('');
 const selectedAllValue = ref<boolean>(false);
+
+const signDataValue = ref<string>('');
 
 const items = ref([
   {
@@ -204,6 +246,67 @@ const addToScope = () => {
   items.value.push({'value': scopeName.value})
   dictScopes.value[scopeName.value] = false
 }
+
+const signDataFromUrl = async (dataUrl: string) => {
+  let login: ThreefoldLogin;
+
+  switch (environment.value) {
+    case Configurations.STAGING:
+      login = new ThreefoldLogin(StagingConfig.threefoldBackend,
+        StagingConfig.appId,
+        StagingConfig.seedPhrase,
+        'callbackSign',
+        StagingConfig.kycBackend)
+
+      break;
+
+    case Configurations.PRODUCTION:
+      login = new ThreefoldLogin(ProductionConfig.threefoldBackend,
+        ProductionConfig.appId,
+        ProductionConfig.seedPhrase,
+        'callbackSign',
+        ProductionConfig.kycBackend)
+
+      break;
+
+    default:
+      login = new ThreefoldLogin(ProductionConfig.threefoldBackend,
+        ProductionConfig.appId,
+        ProductionConfig.seedPhrase,
+        'callbackSign',
+        ProductionConfig.kycBackend)
+
+      break;
+  }
+
+  const state = generateRandomString();
+  console.log('This is the state')
+  console.log(state)
+  window.localStorage.setItem("state", state)
+
+  const hashedUrl: string = hashData(signDataValue.value);
+  const signUrl = login.generateSignUrl(state, hashedUrl, signDataValue.value, isJsonUrl.value, login.redirectUrl)
+
+  const popup = popupCenter(signUrl, 'Threefold login', 800, 550);
+
+  window.onmessage = async (e: MessageEvent) => {
+    console.log(e.data.message)
+    if (e.data.message == 'threefoldSignRedirectSuccess') {
+      const signedDataMessage = e.data.profileData?.profile?.signedData
+      if (signedDataMessage) {
+        console.log("signedData. ", signedDataMessage)
+        signedData.value = e.data.profileData?.profile
+      }
+
+      popup?.close();
+    }
+
+    if (e.data.message == 'threefoldSignCancel') {
+      popup?.close();
+    }
+  };
+}
+
 
 const loginWithCustomScope = async (scope: Record<string, boolean>) => {
   let login: ThreefoldLogin;
@@ -328,11 +431,15 @@ export default defineComponent({
       scopeName,
       selectedAllValue,
       environment,
+      signDataValue,
+      isJsonUrl,
+      signedData,
       Configurations,
       addToScope,
       loginWithCustomScope,
       toggleScope,
       toggleMandatory,
+      signDataFromUrl,
 
     }
   }
