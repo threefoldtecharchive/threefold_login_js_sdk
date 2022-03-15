@@ -165,7 +165,7 @@ const signedIdentityGenderIdentifier = ref({});
 const signedIdentityCountryIdentifier = ref({});
 const signedIdentityDocumentMetaIdentifier = ref({});
 const signedIdentityDOBIdentifier = ref({});
-const signedData = ref({});
+const signedData = ref<any>({});
 const isJsonUrl = ref<boolean>(false)
 
 const dictScopes = ref<any>({})
@@ -320,7 +320,7 @@ const signDataFromUrl = async (dataUrl: string) => {
         console.log("signedData. ", signedDataMessage)
         signedData.value = e.data.profileData?.profile
 
-        isValidHash.value = !!(signedData.value['hashedData'] && signedData.value['hashedData'] === hashedUrl);
+        isValidHash.value = !!(signedData.value['hashedData'] && signedData.value['hashedData'].toString() === hashedUrl);
       }
 
       popup?.close();
