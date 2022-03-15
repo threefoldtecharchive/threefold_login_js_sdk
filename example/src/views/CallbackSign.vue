@@ -56,7 +56,8 @@ export default defineComponent({
      try {
        console.log('Trying this')
        const profileData = await login.parseAndValidateRedirectUrlForSigning(redirectUrl, state);
-
+       console.log('THIS IS THE PROFILE DATA');
+       console.log(profileData)
        window.opener.postMessage({message: 'threefoldSignRedirectSuccess', profileData: profileData});
 
      } catch (e) {

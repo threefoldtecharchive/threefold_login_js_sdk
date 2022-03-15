@@ -213,10 +213,11 @@ export class ThreefoldLogin {
 
     // consider signResultObject as verified
     const signedData = signResultObject['signedData'];
+    const hashedData = signResultObject['dataHash'];
 
     return {
       randomRoom: signResultObject.randomRoom,
-      profile: {doubleName, signedData},
+      profile: {doubleName, signedData, hashedData},
     };
   }
 
