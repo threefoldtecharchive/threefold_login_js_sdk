@@ -49,6 +49,20 @@
       <pre>{{ signedData }}</pre>
     </div>
 
+    <br>
+
+    <div>
+      <h4>Is valid hash</h4>
+      <div v-if="isValidHash === true">
+        <span style="color: green">Hash has been validated</span>
+      </div>
+      <div v-else-if="isValidHash === false">
+        <span style="color: red">Hash mismatch</span>
+      </div>
+      <div v-else>
+        Unknown
+      </div>
+    </div>
     <hr>
     <br>
 
@@ -160,6 +174,8 @@ const selectedAllValue = ref<boolean>(false);
 
 const signDataValue = ref<string>('');
 const friendlyNameDataValue = ref<string>('');
+
+const isValidHash = ref<boolean>();
 
 const items = ref([
   {
@@ -303,6 +319,8 @@ const signDataFromUrl = async (dataUrl: string) => {
       if (signedDataMessage) {
         console.log("signedData. ", signedDataMessage)
         signedData.value = e.data.profileData?.profile
+
+        isValidHash.value = !!(signedData.value['hashedData'] && signedData.value['hashedData'] === hashedUrl);
       }
 
       popup?.close();
@@ -443,6 +461,7 @@ export default defineComponent({
       signedData,
       friendlyNameDataValue,
       Configurations,
+      isValidHash,
       addToScope,
       loginWithCustomScope,
       toggleScope,
