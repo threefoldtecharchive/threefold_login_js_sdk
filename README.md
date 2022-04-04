@@ -63,3 +63,12 @@ try {
     // something went wrong 
 }
 ```
+
+For deploying, please build the docker locally and push to dockerhub with the following command in the root folder:
+
+``` docker build -f example/Dockerfile .  -t threefoldjimber/login-example:latest ```
+
+After that, push the docker to the Hub and pull on the right server
+
+
+
