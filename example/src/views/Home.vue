@@ -38,7 +38,9 @@
     <br>
     <br>
     <h3>Data object</h3>
-    <span>{"dataUrl" : "{{ signDataValue }}", "isJson": "{{ isJsonUrl }}", "friendlyName" : "{{friendlyNameDataValue}}"}</span>
+    <span>{"dataUrl" : "{{ signDataValue }}", "isJson": "{{
+        isJsonUrl
+      }}", "friendlyName" : "{{ friendlyNameDataValue }}"}</span>
     <br>
     <br>
     <input class="button" type="submit" @click="signDataFromUrl(signDataValue)" value="Send request">
@@ -156,6 +158,7 @@ import {Configurations} from "@/enums";
 import {defineComponent, ref, watch} from "vue";
 import {stringify} from "ts-jest/dist/utils/json";
 import {hashData} from "../../../src/utils/crypto";
+import axios from "axios";
 
 const profile = ref({});
 const signedEmailIdentifier = ref({});
@@ -308,7 +311,16 @@ const signDataFromUrl = async (dataUrl: string) => {
   window.localStorage.setItem("state", state)
 
   const hashedUrl: string = hashData(signDataValue.value);
-  const signUrl = login.generateSignUrl(state, hashedUrl, signDataValue.value, isJsonUrl.value, friendlyNameDataValue.value, login.redirectUrl)
+
+  const urlContent: string = await getContentFromUrl(dataUrl);
+
+  if (!urlContent) {
+    console.error('Enter valid url')
+    return;
+  }
+
+  const hashedContent = hashData(urlContent.toString());
+  const signUrl = login.generateSignUrl(state, hashedContent, signDataValue.value, isJsonUrl.value, friendlyNameDataValue.value, login.redirectUrl)
 
   const popup = popupCenter(signUrl, 'Threefold login', 800, 550);
 
@@ -330,6 +342,16 @@ const signDataFromUrl = async (dataUrl: string) => {
       popup?.close();
     }
   };
+}
+
+
+const getContentFromUrl = async (url: string): Promise<any> => {
+  try {
+    const res = await axios.get(url)
+    return res.data
+  } catch (e) {
+    return null;
+  }
 }
 
 
