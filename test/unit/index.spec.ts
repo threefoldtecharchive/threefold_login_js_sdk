@@ -19,7 +19,7 @@ import { parseSignedAttemptFromUrl } from '../../src/utils/parse';
 const protocol = 'https:';
 
 // const rawHost = 'test-bot-front-end.io';
-const rawHost = 'login.staging.jimber.org';
+const rawHost = 'login.staging.jimber.io';
 
 const threeFoldAPIHost = protocol + '//' + rawHost;
 const appId = 'test.threefoldlogin';
@@ -29,7 +29,7 @@ const appId = 'test.threefoldlogin';
 const seedPhrase =
     'calm science teach foil burst until next mango hole sponsor fold bottom cousin push focus track truly tornado turtle over tornado teach large fiscal';
 const redirectUrl = 'https://test-bot-front-end.io';
-const kycBackendUrl = 'https://openkyc.staging.jimber.org';
+const kycBackendUrl = 'https://openkyc.staging.jimber.io';
 
 let login: ThreefoldLogin;
 let state: string;
@@ -234,9 +234,11 @@ describe('ThreefoldLogin', () => {
     }, 1000);
 
     it('should check if email is verified', async () => {
+      console.log(login.threeFoldAPIHost)
         const emailData = await login.isEmailVerified(
             testSignedEmailIdentifier
         );
+      console.log(emailData)
         expect(emailData).toBe(true);
     }, 1000);
 

@@ -1,6 +1,6 @@
 {
   "name": "@threefoldjimber/threefold_login",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "threefold login js sdk",
   "main": "dist/index.js",
   "types": "dist/index.d.js",
