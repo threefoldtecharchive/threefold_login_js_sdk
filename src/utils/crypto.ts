@@ -1,4 +1,4 @@
-import sodium, { KeyPair } from 'libsodium-wrappers';
+import sodium, {crypto_hash, KeyPair} from 'libsodium-wrappers';
 import { entropyToMnemonic, mnemonicToEntropy } from 'bip39';
 import { encodeUTF8, decodeBase64, encodeBase64 } from 'tweetnacl-util';
 
@@ -49,4 +49,8 @@ export const decrypt: (
         newPrivateKey
     );
     return encodeUTF8(decryptedData);
+};
+
+export const hashData: (data: string) => string = (data: string) => {
+    return encodeBase64(crypto_hash(data));
 };

@@ -51,6 +51,7 @@ export default defineComponent({
       window.opener.postMessage({message: 'threefoldLoginRedirectSuccess', profileData: profileData});
       console.log(profileData)
     } catch (e) {
+      console.log('This is the error')
       console.error("Error", e)
     }
   }

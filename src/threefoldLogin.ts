@@ -58,13 +58,42 @@ export class ThreefoldLogin {
 
     const url = new URL(this._threeFoldApiUrl);
 
-    const params : any = {
+    const params: any = {
       state: state,
       appid: this._appId,
       publickey: publickey,
       redirecturl: this._redirectUrl,
       ...extraParams,
     };
+    for (const paramsKey in params) {
+      url.searchParams.append(paramsKey, params[paramsKey]);
+    }
+
+    return url.toString();
+  }
+
+  generateSignUrl(
+    state: string,
+    dataHash: string,
+    dataUrl: string,
+    isJson: boolean,
+    friendlyName: string,
+    redirectUrl: string
+  ): string {
+
+    const url = new URL(this._threeFoldApiUrl + '/sign');
+
+    const params = {
+      appId: this._appId,
+      state: state,
+      dataHash: dataHash,
+      dataUrl: dataUrl,
+      isJson: isJson,
+      friendlyName: friendlyName,
+      redirectUrl: redirectUrl
+
+    };
+
     for (const paramsKey in params) {
       url.searchParams.append(paramsKey, params[paramsKey]);
     }
@@ -124,6 +153,71 @@ export class ThreefoldLogin {
       selectedImageId: signResultObject.selectedImageId,
       randomRoom: signResultObject.randomRoom,
       profile: {doubleName, ...JSON.parse(profileData)},
+    };
+  }
+
+  async parseAndValidateRedirectUrlForSigning(
+    url: URL,
+    state: string
+  ): Promise<{
+    randomRoom: string;
+    profile: Record<string, unknown>;
+  }> {
+    console.log('Waiting for sodium')
+    await sodium.ready;
+
+    console.log('url: ', url)
+    console.log('state', state)
+
+    const {signedAttempt, doubleName} = parseSignedAttemptFromUrl(url);
+
+    console.log('signed attempt', signedAttempt)
+    console.log('doublename', doubleName)
+
+    const decodedSignedAttempt = decodeBase64(signedAttempt);
+    console.log('decoded signed attempt', decodedSignedAttempt)
+
+    console.log('This is the public key')
+    const userPublicKey: Uint8Array = await this.getPublicKeyForDoubleName(
+      doubleName
+    );
+
+    console.log(userPublicKey)
+
+    const signResult = sodium.crypto_sign_open(
+      decodedSignedAttempt,
+      userPublicKey
+    );
+
+    console.log('this is the sign result')
+    console.log(signResult)
+
+    const signResultObject = JSON.parse(encodeUTF8(signResult));
+    console.log('this is the utf 8 encoded object')
+    console.log(signResultObject)
+
+
+
+
+    if (signResultObject.signedState !== state) {
+      throw Error('state could not be matched');
+    }
+
+    if (signResultObject.doubleName !== doubleName) {
+      throw Error('The name cannot be matched.');
+    }
+
+    if (signResultObject.appId !== this._appId) {
+      throw Error('The appId cannot be matched.');
+    }
+
+    // consider signResultObject as verified
+    const signedData = signResultObject['signedData'];
+    const hashedData = signResultObject['dataHash'];
+
+    return {
+      randomRoom: signResultObject.randomRoom,
+      profile: {doubleName, signedData, hashedData},
     };
   }
 
