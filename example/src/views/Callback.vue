@@ -47,7 +47,7 @@ export default defineComponent({
     const redirectUrl = new URL(window.location.href)
 
     try {
-      const profileData = await login.  parseAndValidateRedirectUrl(redirectUrl, state);
+      const profileData = await login.parseAndValidateRedirectUrl(redirectUrl, state);
       window.opener.postMessage({message: 'threefoldLoginRedirectSuccess', profileData: profileData});
       console.log(profileData)
     } catch (e) {
