@@ -11,7 +11,7 @@ export const ProductionConfig =  {
 }
 
 export const StagingConfig =  {
-  threefoldBackend:  'https://login.staging.jimber.io',
+  threefoldBackend:  'https://loginv2.staging.jimber.io',
   kycBackend: 'https://openkyc.staging.jimber.io',
   redirect_url: '/callback',
   appId: window.location.host,

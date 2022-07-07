@@ -227,11 +227,11 @@ export class ThreefoldLogin {
     const userData = await Axios.get(
       `${this._threeFoldApiUrl}/api/users/${doubleName}`
     );
-    if (!userData?.data?.publicKey) {
+    if (!userData?.data?.mainPublicKey) {
       throw Error('no publicKey');
     }
 
-    return decodeBase64(userData.data.publicKey);
+    return decodeBase64(userData.data.mainPublicKey);
   }
 
   async verifySignedEmailIdenfier(
