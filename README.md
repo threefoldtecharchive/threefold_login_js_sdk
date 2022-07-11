@@ -69,6 +69,7 @@ For deploying, please build the docker locally and push to dockerhub with the fo
 ``` docker build -f example/Dockerfile .  -t threefoldjimber/login-example:latest ```
 
 After that, push the docker to the Hub and pull on the right server
+``` docker push threefoldjimber/login-example:latest ```
 
 
 

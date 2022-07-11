@@ -156,7 +156,6 @@ import {environment, ProductionConfig, StagingConfig,} from '@/config/config';
 import type {Scope} from "@/types/home";
 import {Configurations} from "@/enums";
 import {defineComponent, ref, watch} from "vue";
-import {stringify} from "ts-jest/dist/utils/json";
 import {hashData} from "../../../src/utils/crypto";
 import axios from "axios";
 
@@ -306,8 +305,7 @@ const signDataFromUrl = async (dataUrl: string) => {
   }
 
   const state = generateRandomString();
-  console.log('This is the state')
-  console.log(state)
+
   window.localStorage.setItem("state", state)
 
   const hashedUrl: string = hashData(signDataValue.value);
@@ -319,8 +317,16 @@ const signDataFromUrl = async (dataUrl: string) => {
     return;
   }
 
-  const hashedContent = hashData(urlContent.toString());
-  const signUrl = login.generateSignUrl(state, hashedContent, signDataValue.value, isJsonUrl.value, friendlyNameDataValue.value, login.redirectUrl)
+  let hashContent: string;
+
+  if (isJsonUrl.value) {
+    hashContent = hashData(JSON.stringify(urlContent));
+  } else {
+    hashContent = hashedUrl
+  }
+
+
+  const signUrl = login.generateSignUrl(state, hashContent, signDataValue.value, isJsonUrl.value, friendlyNameDataValue.value, login.redirectUrl)
 
   const popup = popupCenter(signUrl, 'Threefold login', 800, 550);
 
@@ -332,7 +338,11 @@ const signDataFromUrl = async (dataUrl: string) => {
         console.log("signedData. ", signedDataMessage)
         signedData.value = e.data.profileData?.profile
 
-        isValidHash.value = !!(signedData.value['hashedData'] && signedData.value['hashedData'].toString() === hashedUrl);
+        if (isJsonUrl.value) {
+          isValidHash.value = !!(signedData.value['hashedData'] && signedData.value['hashedData'].toString() === hashContent);
+        } else {
+          isValidHash.value = !!(signedData.value['hashedData'] && signedData.value['hashedData'].toString() === hashedUrl);
+        }
       }
 
       popup?.close();
