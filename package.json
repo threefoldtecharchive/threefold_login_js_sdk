@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "@types/libsodium-wrappers": "^0.7.8",
+    "@types/node": "^18.0.6",
     "@types/randomstring": "^1.1.6",
     "@typescript-eslint/eslint-plugin": "^4.6.0",
     "@typescript-eslint/parser": "^4.6.0",
@@ -63,9 +64,9 @@
     "access": "public"
   },
   "dependencies": {
+    "@jimber/simple-bip39": "^1.0.0",
     "@types/jest": "^27.0.2",
     "axios": "^0.21.0",
-    "bip39": "^3.0.2",
     "libsodium-wrappers": "^0.7.8",
     "randomstring": "^1.1.5",
     "tweetnacl-util": "^0.15.1"
