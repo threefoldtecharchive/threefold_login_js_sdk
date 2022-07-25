@@ -98,10 +98,21 @@
       <div></div>
       <div></div>
     </div>
+
+
     <br>
     <hr>
     <br>
+    <div class="flex-container" style="padding: 10px">
+      <div>Named derived seed</div>
+      <div>
+        <input style="padding: 5px; text-align: center" @keyup.enter="addToScope" v-model="namedDerivedSeed"
+               type="text">
+      </div>
+    </div>
+    <br><br>
 
+    <hr>
     <div>
       <h3>Scope object</h3>
       {{ dictScopes }}
@@ -172,6 +183,7 @@ const isJsonUrl = ref<boolean>(false)
 
 const dictScopes = ref<any>({})
 const scopeName = ref<string>('');
+const namedDerivedSeed = ref(null);
 const selectedAllValue = ref<boolean>(false);
 
 const signDataValue = ref<string>('');
@@ -402,9 +414,8 @@ const loginWithCustomScope = async (scope: Record<string, boolean>) => {
   const state = generateRandomString();
 
   const extraParams = {
-    scope: JSON.stringify(scope),
+    scope: JSON.stringify(scope)
   };
-
 
   window.localStorage.setItem("state", state)
   const loginUrl = login.generateLoginUrl(state, extraParams);
@@ -472,6 +483,14 @@ watch(selectedAllValue, (isSelected: boolean, prevSelection: boolean) => {
   })
 })
 
+watch(namedDerivedSeed, () => {
+  dictScopes.value['derivedSeedName'] = namedDerivedSeed.value
+
+  if (dictScopes.value['derivedSeedName'] == '' || dictScopes.value['derivedSeedName'] == null) {
+    delete dictScopes.value['derivedSeedName']
+  }
+})
+
 export default defineComponent({
   setup() {
     return {
@@ -487,6 +506,7 @@ export default defineComponent({
       dictScopes,
       scopeName,
       selectedAllValue,
+      namedDerivedSeed,
       environment,
       signDataValue,
       isJsonUrl,
