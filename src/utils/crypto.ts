@@ -1,5 +1,5 @@
 import sodium, {crypto_hash, KeyPair} from 'libsodium-wrappers';
-import { entropyToMnemonic, mnemonicToEntropy } from 'bip39';
+import { entropyToMnemonic, mnemonicToEntropy } from '@jimber/simple-bip39';
 import { encodeUTF8, decodeBase64, encodeBase64 } from 'tweetnacl-util';
 
 export { generate as generateRandomString } from 'randomstring';
@@ -10,7 +10,13 @@ export { generate as generateRandomString } from 'randomstring';
 export const generateRandomSeedPhrase: () => string = () => {
     const length = sodium.crypto_sign_SEEDBYTES;
     const entropy = sodium.randombytes_buf(length);
-    return entropyToMnemonic(entropy as Buffer);
+    return entropyToMnemonic(entropy);
+};
+
+export const decodeHex: (hexString: string) => Uint8Array = hexString => {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //@ts-ignore
+  return new Uint8Array(hexString.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
 };
 
 export const getEdPkInCurve: (publicKey: Uint8Array) => string = publicKey => {
@@ -22,7 +28,7 @@ export const generateKeyPair: (seedPhrase: string) => KeyPair = (
 ) => {
     const entropy = mnemonicToEntropy(seedPhrase);
     // const encodedEntropy = new TextEncoder().encode(entropy);
-    const encodedEntropy = Uint8Array.from(Buffer.from(entropy, 'hex'));
+    const encodedEntropy = Uint8Array.from(decodeHex(entropy));
 
     return sodium.crypto_sign_seed_keypair(encodedEntropy);
 };

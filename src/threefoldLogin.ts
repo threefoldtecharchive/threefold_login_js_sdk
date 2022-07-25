@@ -1,7 +1,7 @@
 import sodium, {KeyPair} from 'libsodium-wrappers';
 import {decrypt, generateKeyPair, getEdPkInCurve} from './utils/crypto';
 import {parseSignedAttemptFromUrl} from './utils/parse';
-import {encodeUTF8, decodeBase64} from 'tweetnacl-util';
+import {decodeBase64, encodeUTF8} from 'tweetnacl-util';
 import Axios from 'axios';
 
 export class ThreefoldLogin {
@@ -227,11 +227,11 @@ export class ThreefoldLogin {
     const userData = await Axios.get(
       `${this._threeFoldApiUrl}/api/users/${doubleName}`
     );
-    if (!userData?.data?.mainPublicKey) {
+    if (!userData?.data?.publicKey) {
       throw Error('no publicKey');
     }
 
-    return decodeBase64(userData.data.mainPublicKey);
+    return decodeBase64(userData.data.publicKey);
   }
 
   async verifySignedEmailIdenfier(
