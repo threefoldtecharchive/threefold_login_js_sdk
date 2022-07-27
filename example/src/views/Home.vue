@@ -103,6 +103,7 @@
     <br>
     <hr>
     <br>
+    <div style="font-size: 12px">Please use valid brackets JSON conventions eg. ["test", "a"] instead of ['a', 'b']</div>
     <div class="flex-container" style="padding: 10px">
       <div>Named derived seed</div>
       <div>
@@ -122,7 +123,6 @@
     <br>
 
     <input class="button" type="submit" @click="loginWithCustomScope(dictScopes)" value="Send request">
-
 
     <div>
       <br>
@@ -484,7 +484,16 @@ watch(selectedAllValue, (isSelected: boolean, prevSelection: boolean) => {
 })
 
 watch(namedDerivedSeed, () => {
-  dictScopes.value['derivedSeedName'] = namedDerivedSeed.value
+  let t;
+
+  try {
+    t = JSON.parse(namedDerivedSeed.value!)
+  }
+  catch(e) {
+    t = namedDerivedSeed.value;
+  }
+
+  dictScopes.value['derivedSeedName'] = t
 
   if (dictScopes.value['derivedSeedName'] == '' || dictScopes.value['derivedSeedName'] == null) {
     delete dictScopes.value['derivedSeedName']
