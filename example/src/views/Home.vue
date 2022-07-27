@@ -103,7 +103,7 @@
     <br>
     <hr>
     <br>
-    <div style="font-size: 12px">Please use valid brackets JSON conventions eg. ["test", "a"] instead of ['a', 'b']</div>
+    <div style="font-size: 12px">When you want to retrieve multiple keys, use ["walletSeed", "portalSeed"] (make sure to use double quotes)</div>
     <div class="flex-container" style="padding: 10px">
       <div>Named derived seed</div>
       <div>
